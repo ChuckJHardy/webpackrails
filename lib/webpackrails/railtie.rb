@@ -26,8 +26,14 @@ module WebpackRails
     # see `commonjs_module?` method
     config.webpackrails.force_condition = []
 
-    initializer :setup_webpack do |app|
-      app.assets.register_postprocessor "application/javascript", WebpackRails::WebpackProcessor
+    if config.respond_to?(:assets)
+      config.assets.configure do |env|
+        env.register_postprocessor "application/javascript", WebpackRails::WebpackProcessor
+      end
+    else
+      initializer :setup_webpack do |app|
+        app.assets.register_postprocessor "application/javascript", WebpackRails::WebpackProcessor
+      end
     end
 
     rake_tasks do 
